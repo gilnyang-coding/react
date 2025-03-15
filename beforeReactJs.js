@@ -96,7 +96,7 @@ let age = person["age"]; // 파이썬에선 이런 식으로 많이 했다 난 �
 person["favoriteFood"] = "crab"
 
 //속성 수정 방법
-person["favoriteFood"] = "kingKrab"
+person["favoriteFood"] = "kingCrab"
 
 //속성 삭제 방법
 delete person["favoriteFood"];
@@ -236,3 +236,192 @@ console.log(name6, hobby) //근데 이러면 원래 스코프가 오염 안 될 
 
 
 //2.4 Spread 연산자 & Rest 매개변수
+//spread: 객체나 배열에 저장된 여러개의 값을 개별로 흩뿌려주는 역할
+let arr6 = [1, 2, 3];
+// 만약 arr6의 값을 arr7의 4,5 사이로 다 집어 넣고 싶을 때 let arr7=[4,arr6[0], arr[1], arr[2], 5, 6]; 이런 식으로 해야 하는데 귀찮고 위험하다. 왜냐? arr6에서 값이 사라졌는데 인덱스로 없어진 값을 불러오라는 문법을 만들 수 있게 되니까.
+let arr7 = [4, ...arr6, 5, 6]; //...이 spread이고 arr6의 모든 값을 넣는다. 이러면 위의 인덱스와 달리 arr6에서 뭐가 추가되거나 없어져도 그거에 맞게 값이 조정된다.
+console.log(arr7)
+
+let obj3 = {
+    a: 1,
+    b: 2,
+}
+let obj4 = {
+    // a:obj3.a, 원래라면 이렇게 집어 넣을 것을
+    ...obj3, //이렇게 한 번에 집어 넣을 수 있다.
+    c: 3,
+    d: 4,
+}
+console.log(obj4)
+
+function funcA(p1, p2, p3) {
+    console.log(p1, p2, p3)
+}
+funcA(...arr6) //이거 넣을 때 ...안 붙이면 arr6이 통째로 p1에 드간다. ...을 붙여야 하나씩 p1,2,3에 드간다.
+
+//Rest 매개변수: 나머지 매개변수.
+function funcB(맨_처음, ...Rest) { //매개변수의 갯수가 6개나 된다. 다 쓰기 귀찮다. 따라서 ...을 쓴다.
+    console.log(맨_처음 + "힣" + Rest + "힣") //${} 안에 ...을 넣을 수 없음 또한 출력할 때 ...은 빼야만 한다.
+}
+funcB(...arr7); //또한 굳이 ...Rest가 아니라 ...니똥꼬도 가능
+
+//2.5 원시타입vs 객체타입. 깊은 복사 얕은 복사 말하는 거
+let p1 = 1 //M(memory):001
+let p2 = p1; //M:002
+p2 = 2 //M:003
+
+let o1 = {
+    name: "kwon" //M:001
+}
+let o2 = o1 //M:002 //설마 얕은 복사할라는데 o1.name 요지랄은 안 하겠지? 이건 객체가 아니다.
+o2.name = "k" //M:001
+//그냥 쉽게 객체를 바꿀 때는 연동되어 연결된 값 모두 바뀐다. 
+console.log(o1) //근데 이러면 좀 복잡할 수 있고 사이드 이펙트라고 의도치 않은 변경이 있을 수 있어 많이 쓰진 말자.
+//얕은 복사를 방지하려면
+let o3 = { ...o1 }; //이렇게 하면 o3가 바뀌어도 o1은 안 바뀐다.
+o3.name = "kkkkk";
+console.log(o1);
+//객체간의 엄격한 비교 ===
+o3 = { ...o1 }
+o2 = o1
+console.log(o1 === o2) //이건 참
+console.log(o1 === o3) //이건 거짓 이유는 객체간의 엄격한 비교에선 참조값도 포함이기에 참조값이 다른 o1, o3는 거짓이 나온다.
+console.log(o1 == o3) //아 여기서도 거짓이 나오네
+console.log(JSON.stringify(o1) === JSON.stringify(o3)) //그냥 속성 값만을 비교하고 싶을 때는 객체를 문자열로 바꿔주는 내장 함수인 JSON.stringify()를 사용하면 된다.
+
+// 2.6 반복문으로 배열과 객체 순회하기
+let arr8 = [10, 20, 30] //기본 for 구조가 순회에 맞춰졌다.
+for (let i = 0; i < arr8.length; i++) {
+    console.log(arr8[i])
+}
+let arr9 = [4, 5, 6, 7, 8]
+for (let index = 0; index < arr9.length; index++) {
+    console.log(arr9[index])
+}
+
+//for of 반복문: 오직 배열을 순회하기 위한 것, 이건 파이썬의 for이랑 완전 같다. 그렇다고 객체는 사용할 수 없는 게 아니라 겍체를 배열로 바꾼 후 사용하면 된다.
+for (let item of arr8) {
+    console.log(item); //위의 for와 다른 것은 이건 index가 없어서 위의 index를 활용해서 하는 거에 제약이 있다.
+}
+
+//객체 순회
+let person6 = {
+    name: "kwon",
+    age: "20",
+    hobby: "coding"
+};
+
+// Object.keys(객체에서 key 값들만 뽑아 새로운 배열로 변환)
+let inf = Object.keys(person6);
+console.log(inf);
+
+for (let i = 0; i < inf.length; i++) {
+    console.log(inf[i])
+};
+
+for (const item of inf) {
+    let value = person6[item]
+    console.log(item + ": " + value)
+}
+
+// Object.values(객체에서 value 값들만 뽑아 새로운 배열로 변환)
+let value = Object.values(person6)
+for (let index = 0; index < value.length; index++) {
+    console.log(value[index])
+}
+
+//for in: 여기서 key를 다른 걸로 바꾸든 value로 바꾸든 key를 출력한다.
+for (const key in person6) {
+    if (Object.prototype.hasOwnProperty.call(person6, key)) {
+        console.log(key + "힣")
+    }
+}
+
+// 2.7 배열 메서드 1.요소 조작(slice부터),2순회와 탐색 이건 그냥 html,css,javascript 폴더 11장을 보자.
+//sliced: 특정 범위를 잘라내서 새로운 배열로 반환 (비파괴적 메서드)
+let arr10 = [1, 2, 3, 4, 5];
+let sliced = arr10.slice(2, 5) //(a,b)여기서 a는 0부터 시작 2인덱스 포함 그 뒤의 b까지 b는 1부터 시작한다. 따라서 3,4,5를 선택한다.
+let sliced2 = arr10.slice(2)
+console.log(sliced) //원본이 바뀌진 않는다. 자세한 건 html,css,javascript 폴더에서 검색하자. 요소 조작을 모두 정리했다.
+console.log(sliced2)
+
+//concat: 두 개의 서로 다른 배열을 이어 붙여서 새로운 배열을 반환
+let concatArr = arr9.concat(arr10)
+console.log(concatArr)
+
+// 2.9 배열 메서드 3, 배열 변형(다 하자) 
+//filter
+let arr11 = [{ name: "kwon" }]
+let f = arr11.filter((item) => item.name === "kwon")
+console.log(f)
+
+//map: 배열의 모든 요소를 순회하면서 각각 콜벡 함수를 실행하고 그 결과들을 모아서 새로운 배열로 변환. 이는 foreach랑 같다. 다만, map는 리턴을 해줄 수 있다.
+let mapresult = arr10.map((item, idx) => {
+    console.log(idx + ": " + item)
+    return item;
+});
+console.log(mapresult)
+
+// 2.10 Date 객체와 날짜(시간을 여러 포맷으로 출력하기만 하기)
+date = new Date()
+console.log(date.toDateString()); //이러면 수가 아니라 문자열로 표시된다.
+console.log(date.toLocaleString()); // 이러면 각 나라의 언어에 맞게 출력된다.
+
+//2.11 동기(작업이 있을 때 순서대로 하나씩 처리하는 것)와 비동기() / 자바스크립트는 특정 함수가 아닌 이상 동기로 실행된다.
+//만약 a가 처리하는데 10초가 걸리고 b가 처리하는데 0.1초가 걸린다고 하면 a를 처리하느라 다른 것들을 처리 못 하니 전체적인 성능이 악화되어버린다.
+//또한 자바스크립트는 쓰레드(작업을 처리하는 인력)가 하나만 존재하여 멀티 쓰레드를 쓸 수 없다.
+//따라서 비동기를 사용한다. 비동기는 여러 작업을 같이 한다는 점에서 멀티 쓰레드와 비슷하지만 비동기는 하나의 작업을 끝내지 않아도 다른 작업을 실행하면서 왔다갔다 실행한다. 출력은 비동기든 동기든 같다.
+console.log(1)
+setTimeout(() => {
+    console.log(2)
+}, 3000) //ms단위 / 쓰레드는 하난데 타이머와 그 뒤 처리를 같이?=> 비동기 함수를 만나면 자바스크립트가 web api에 타이머 기능을 처리해달라고 넘기고 web api는 처리하고 콜백함수도 같이 넘겨준다.
+console.log(3)
+
+//2.12 비동기 작업 처리하기 1. 콜백 함수
+function task(a, b, callback) {  //이런 식으로도 할 수 있다.
+    setTimeout(() => {
+        let sum = a + b;
+        callback(sum)
+    }, 1);
+}
+task(1, 2, (value) => {
+    console.log(value);
+});
+
+//음식을 주문하는 상황
+function foodOrder(callback) {
+    setTimeout(() => {
+        let food = "치킨"
+        callback(food)
+    }, 1000)
+}
+
+// 치킨이 너무 뜨겁다. 식혀보자
+function coolDownFood(food, callback) {
+    setTimeout(() => {
+        let coolDownedFood = `상온에 10분 둔 ${food}`
+        callback(coolDownedFood)
+    }, 1000)
+}
+
+function freezeFood(food, callback) {
+    setTimeout(() => {
+        let frozenFood = `냉동고에 둔지 3시간 뒤의 ${food}`
+        callback(frozenFood)
+    }, 1000);
+}
+
+foodOrder((food) => {
+    console.log(`${food} 배달 완료`)
+
+    coolDownFood(food, (coolDownedFood) => { //이 food는 위의 foodOrder에서 가져올 수 있다.
+        console.log(`${coolDownedFood}이/가 식었다.`)
+
+        freezeFood(food, (frozenFood) => {
+            console.log(`${frozenFood}이/가 얼었다.`)
+        })
+    })
+
+})
+
+// 2.13 이후는 팀 프로젝트 이후 하자.
